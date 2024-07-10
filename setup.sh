@@ -12,6 +12,7 @@ apt update
 apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git 
 apt install -y linux-headers-`uname -r`
 
+
 ## lmod and lua
 apt install -y liblua5.1-0 liblua5.1-0-dev lua5.1 tcl tcl8.6-dev libtcl8.6 lua-posix-dev
 wget -qO- https://codeload.github.com/TACC/Lmod/tar.gz/refs/tags/8.7.43 | tar xvz
@@ -29,6 +30,7 @@ echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt
 apt update
 apt install -y intel-basekit intel-hpckit
 /opt/intel/oneapi/modulefiles-setup.sh --output-dir=/opt/apps/modulefiles/intel
+mkdir /opt/apps/modulefiles/Linux/intel
 cat <<EOT >> /opt/apps/modulefiles/Linux/intel/latest.lua
 -- -*- lua -*-
 ------------------------------------------------------------------------
@@ -158,6 +160,7 @@ curl https://developer.download.nvidia.com/hpc-sdk/ubuntu/DEB-GPG-KEY-NVIDIA-HPC
 echo 'deb [signed-by=/usr/share/keyrings/nvidia-hpcsdk-archive-keyring.gpg] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /' | tee /etc/apt/sources.list.d/nvhpc.list
 apt update -y
 apt install -y nvhpc-24-5
+mkdir /opt/apps/modulefiles/Linux/nvhpc
 cat <<EOT >> /opt/apps/modulefiles/Linux/nvhpc/24.5.lua
 help(
 [[
@@ -260,6 +263,7 @@ cd openmpi-5.0.3
 ./configure --prefix=/opt/openmpi CC=icx CXX=icpx FC=ifx
 make -j16
 make install
+mkdir /opt/apps/modulefiles/Linux/openmpi
 cat <<EOT >> /opt/apps/modulefiles/Linux/openmpi/5.0.3.lua
 whatis([[Name : OpenMPI]])
 whatis([[Version : 5.0.3]])
