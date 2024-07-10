@@ -7,6 +7,8 @@ else
 fi
 
 sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
+useradd -m user
+echo 'user:user123' | chpasswd
 
 PFX=$(pwd)
 
@@ -25,6 +27,16 @@ ln -s /opt/apps/lmod/lmod/init/profile        /etc/profile.d/z00_lmod.sh
 ln -s /opt/apps/lmod/lmod/init/cshrc          /etc/profile.d/z00_lmod.csh
 source /etc/profile
 cd $PFX
+
+## spack
+apt install build-essential ca-certificates coreutils curl environment-modules gfortran git gpg lsb-release python3 python3-distutils python3-venv unzip zip
+git clone --depth=100 --branch=releases/v0.21 https://github.com/spack/spack.git /opt/spack
+export SPACK_ROOT="/opt/spack"
+. /opt/spack/share/spack/setup-env.sh
+cat <<EOT > /etc/profile.d/z00_spack.sh
+export SPACK_ROOT="/opt/spack"
+. /opt/spack/share/spack/setup-env.sh
+EOT
 
 ## intel oneapi mkl
 wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
@@ -283,3 +295,5 @@ EOT
 module unload intel/latest
 module unload nvhpc
 cd $PFX
+
+chmod -R 777 /opt
