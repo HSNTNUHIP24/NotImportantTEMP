@@ -11,7 +11,7 @@ sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrest
 PFX=$(pwd)
 
 apt update
-apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git 
+apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git build-essential 
 apt install -y linux-headers-`uname -r`
 
 
@@ -32,7 +32,7 @@ echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt
 apt update
 apt install -y intel-basekit intel-hpckit
 /opt/intel/oneapi/modulefiles-setup.sh --output-dir=/opt/apps/modulefiles/intel
-mkdir /opt/apps/modulefiles/Linux/intel
+mkdir -p /opt/apps/modulefiles/Linux/intel
 cat <<EOT >> /opt/apps/modulefiles/Linux/intel/latest.lua
 -- -*- lua -*-
 ------------------------------------------------------------------------
@@ -162,7 +162,7 @@ curl https://developer.download.nvidia.com/hpc-sdk/ubuntu/DEB-GPG-KEY-NVIDIA-HPC
 echo 'deb [signed-by=/usr/share/keyrings/nvidia-hpcsdk-archive-keyring.gpg] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /' | tee /etc/apt/sources.list.d/nvhpc.list
 apt update -y
 apt install -y nvhpc-24-5
-mkdir /opt/apps/modulefiles/Linux/nvhpc
+mkdir -p /opt/apps/modulefiles/Linux/nvhpc
 cat <<EOT >> /opt/apps/modulefiles/Linux/nvhpc/24.5.lua
 help(
 [[
@@ -186,7 +186,7 @@ family("nvhpc")
 if mode() == "load" then
 printmegs = [[
 --------------------------------
-Loading NVIDIA HPC SDK 23.5 with CUDA / OpenMPI
+Loading NVIDIA HPC SDK 24.5 with CUDA / OpenMPI
 You can copy or echo "\$NV_EXAMPLE"
 (ex: echo \$NV_EXAMPLE; cp -r \$NV_EXAMPLE /home/\$USER)
 --------------------------------
@@ -259,13 +259,14 @@ cd $PFX
 
 ## openmpi
 module load intel/latest
+module load nvhpc
 wget https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.3.tar.gz
 tar zxf openmpi-5.0.3.tar.gz
 cd openmpi-5.0.3
 ./configure --prefix=/opt/openmpi CC=icx CXX=icpx FC=ifx
 make -j16
 make install
-mkdir /opt/apps/modulefiles/Linux/openmpi
+mkdir -p /opt/apps/modulefiles/Linux/openmpi
 cat <<EOT >> /opt/apps/modulefiles/Linux/openmpi/5.0.3.lua
 whatis([[Name : OpenMPI]])
 whatis([[Version : 5.0.3]])
@@ -280,21 +281,5 @@ prepend_path("CPATH", pathJoin(root, "include"))
 prepend_path("LIBRARY_PATH", pathJoin(root, "lib"))
 EOT
 module unload intel/latest
+module unload nvhpc
 cd $PFX
-
-## hpl install
-cd /opt
-wget https://github.com/TWTom041/hipac_practice/releases/download/hpl/hpl.zip
-unzip hpl.zip
-rm hpl.zip
-ln -s /opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin/libiomp5.so /opt/intel/oneapi/mkl/latest/lib/intel64/libiomp5.so
-cd /opt/hpl-2.0_FERMI_v15
-make arch=CUDA
-cd $PFX
-
-## hpcg install
-cd /opt
-git clone https://github.com/NVIDIA/nvidia-hpcg
-cd nvidia-hpcg
-sed -i "s/USE_GRACE=1/USE_GRACE=0/g" build_sample.sh
-MPI_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/24.5/comm_libs/mpi CUDA_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/24.5/cuda MATHLIBS_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/24.5/math_libs NCCL_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/24.5/comm_libs/nccl NVPL_SPARSE_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/24.5/math_libs/12.4/targets/x86_64-linux build_sample.sh
