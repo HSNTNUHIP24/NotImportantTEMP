@@ -6,6 +6,8 @@ else
     exit 1
 fi
 
+sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
+
 PFX=$(pwd)
 
 apt update
