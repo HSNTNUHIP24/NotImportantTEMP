@@ -45,7 +45,7 @@ apt update
 apt install -y intel-basekit intel-hpckit
 /opt/intel/oneapi/modulefiles-setup.sh --output-dir=/opt/apps/modulefiles/intel
 mkdir -p /opt/apps/modulefiles/Linux/intel
-cat <<EOT >> /opt/apps/modulefiles/Linux/intel/latest.lua
+cat <<EOT > /opt/apps/modulefiles/Linux/intel/latest.lua
 -- -*- lua -*-
 ------------------------------------------------------------------------
 --  Intel® oneAPI DPC++/C++/Fortran Compiler 2024.0.2 for Linux*
@@ -175,7 +175,7 @@ echo 'deb [signed-by=/usr/share/keyrings/nvidia-hpcsdk-archive-keyring.gpg] http
 apt update -y
 apt install -y nvhpc-24-5
 mkdir -p /opt/apps/modulefiles/Linux/nvhpc
-cat <<EOT >> /opt/apps/modulefiles/Linux/nvhpc/24.5.lua
+cat <<EOT > /opt/apps/modulefiles/Linux/nvhpc/24.5.lua
 help(
 [[
 NVIDIA HPC SDK
@@ -279,8 +279,8 @@ cd openmpi-5.0.3
 make -j16
 make install
 mkdir -p /opt/apps/modulefiles/Linux/openmpi
-cat <<EOT >> /opt/apps/modulefiles/Linux/openmpi/5.0.3.lua
-whatis([[Name : OpenMPI]])
+cat <<EOT > /opt/apps/modulefiles/Linux/openmpi/5.0.3.lua
+whatis([[Name : Intel Compiled OpenMPI]])
 whatis([[Version : 5.0.3]])
 
 

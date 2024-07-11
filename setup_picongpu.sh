@@ -10,70 +10,103 @@ module load nvhpc
 
 # cmake and other apt things
 apt install -y cmake file cmake-curses-gui git rsync libpng-dev libblosc-dev libjpeg-dev libjansson-dev paraview-dev
-spack install pngwriter openpmd-api isaac
+echo "cmake:"
+spack install --reuse cmake@3.26.6 %gcc@12.2.0
+spack load cmake@3.26.6 ^openssl certs=mozilla %gcc@12.2.0
 
-# openmpi (from nvhpc)
-export MPI_ROOT=/opt/nvidia/hpc_sdk/Linux_x86_64/24.5/comm_libs/12.4/hpcx/hpcx-2.19/ompi
-export OMPI_MCA_mpi_leave_pinned=1
+echo "openpmd-api:"
+spack install --reuse openpmd-api@0.15.2 +python %gcc@12.2.0 \
+    ^adios2@2.9.2 ++blosc2 +cuda cuda_arch=70\
+    ^cmake@3.26.6 \
+    ^hdf5@1.14.3 \
+    ^openmpi@4.1.5 +atomics +cuda cuda_arch=70\
+    ^python@3.11.6 \
+    ^py-numpy@1.26.2
 
-# Boost
-apt install -y libboost-program-options-dev libboost-atomic-dev libboost-all-dev
-# export CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu:$CMAKE_PREFIX_PATH
+echo "boost:"
+spack install --reuse boost@1.83.0 \
+    +program_options \
+    +atomic \
+    ~python \
+    cxxstd=17 \
+    %gcc@12.2.0
 
-git clone https://github.com/ComputationalRadiationPhysics/picongpu.git /home/user/src/picongpu
-export PICSRC=/home/user/src
-export PIC_EXAMPLES=$PICSRC/share/picongpu/examples
-export PATH=$PATH:$PICSRC
-export PATH=$PATH:$PICSRC/bin
-export PATH=$PATH:$PICSRC/src/tools/bin
-export PYTHONPATH=$PICSRC/lib/python:$PYTHONPATH
+echo "pngwriter"
+spack install --reuse pngwriter@0.7.0 %gcc@12.2.0
 
-# ## libpng (apt)
-# export PNG_ROOT=/usr/lib/x86_64-linux-gnu
-# export CMAKE_PREFIX_PATH=$PNG_ROOT:$CMAKE_PREFIX_PATH
+echo "pip:"
+spack mark -e py-pip ^python@3.11.6 %gcc@12.2.0
+
+cat <<EOT > picongpu.profile
+# Name and Path of this Script ############################### (DO NOT change!)
+export PIC_PROFILE=\$(cd \$(dirname \$BASH_SOURCE) && pwd)"/"\$(basename \$BASH_SOURCE)
+
+# User Information ################################# (edit the following lines)
+#   - automatically add your name and contact to output file meta data
+#   - send me a mail on batch system jobs: NONE, BEGIN, END, FAIL, REQUEUE, ALL,
+#     TIME_LIMIT, TIME_LIMIT_90, TIME_LIMIT_80 and/or TIME_LIMIT_50
+export MY_MAILNOTIFY="ALL"
+export MY_MAIL="someone@example.com"
+export MY_NAME="\$(whoami) <\$MY_MAIL>"
+
+# Text Editor for Tools ###################################### (edit this line)
+#   - examples: "nano", "vim", "emacs -nw", "vi" or without terminal: "gedit"
+export EDITOR="nano"
+
+# load packages
+spack unload
+
+# PIConGPU build dependencies #################################################
+#   need to load correct cmake and gcc to compile picongpu
+
+spack load gcc@12.2.0
+spack load cmake@3.26.6 ^openssl certs=mozilla %gcc@12.2.0
+
+# General modules #############################################################
+#   correct dependencies are automatically loaded, if successfully installed using install.sh
+#   and no name confilcts in spack, see install.sh for more precise definition
+#   if name conflicts occur
+
+spack load openpmd-api@0.15.2 %gcc@12.2.0 \
+    ^adios2@2.9.2 \
+    ^hdf5@1.14.3 \
+    ^openmpi@4.1.5 +atomics +cuda cuda_arch=70 \
+    ^python@3.11.6 \
+    ^py-numpy@1.26.2
+spack load boost@1.83.0 %gcc@12.2.0
+
+# PIConGPU output dependencies ################################################
+#
+spack load pngwriter@0.7.0 %gcc@12.2.0
+
+# Python pip dependency #######################################################
+spack load py-pip ^python@3.11.6 %gcc@12.2.0
 
 
-## pngwriter
-mkdir -p /home/user/src /home/user/lib
-git clone -b 0.7.0 https://github.com/pngwriter/pngwriter.git /home/user/src/pngwriter/
-cd /home/user/src/pngwriter
-mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=/home/user/lib/pngwriter ..
-make install
+# Environment #################################################################
+#
+export PICSRC=\$HOME/src/picongpu
+export PIC_EXAMPLES=\$PICSRC/share/picongpu/examples
+export PIC_BACKEND="cuda:70"
 
-export CMAKE_PREFIX_PATH=/home/user/lib/pngwriter:$CMAKE_PREFIX_PATH
+# Path to the required templates of the system,
+# relative to the PIConGPU source code of the tool bin/pic-create.
+export PIC_SYSTEM_TEMPLATE_PATH=\${PIC_SYSTEM_TEMPLATE_PATH:-"etc/picongpu/bash-devServer-hzdr"}
 
-## openPMD API
-mkdir -p /home/user/src /home/user/lib
-git clone -b 0.15.0 https://github.com/openPMD/openPMD-api.git /home/user/src/openPMD-api
-cd /home/user/src/openPMD-api
-mkdir build && cd build
-cmake .. -DopenPMD_USE_MPI=ON -DCMAKE_INSTALL_PREFIX=/home/user/lib/openPMD-api
+export PATH=\$PICSRC/bin:\$PATH
+export PATH=\$PICSRC/src/tools/bin:\$PATH
 
-export CMAKE_PREFIX_PATH="/home/user/lib/openPMD-api:$CMAKE_PREFIX_PATH"
+export PYTHONPATH=\$PICSRC/lib/python:\$PYTHONPATH
 
-# ## c blosc (apt)
-# export BLOSC_ROOT=/usr/lib/x86_64-linux-gnu
-# export CMAKE_PREFIX_PATH=$BLOSC_ROOT:$CMAKE_PREFIX_PATH
+# "tbg" default options #######################################################
+export TBG_SUBMIT="bash"
+export TBG_TPLFILE="etc/picongpu/bash-devServer-hzdr/mpiexec.tpl"
 
-## isaac (interactive visualization tool, i think it's not needed)
-# cd /home/user
-# git clone https://github.com/ComputationalRadiationPhysics/isaac.git
-# cd isaac
-# cd lib
-# mkdir build
-# cd build
-# cmake ..
-# make install
-
-## FFTW3
-mkdir -p /home/user/src /home/user/lib
-cd /home/user/src
-wget -qO- http://fftw.org/fftw-3.3.10.tar.gz | tar xvz
-FFTW_ROOT=/home/user/lib/fftw-3.3.10
-./configure --prefix="$FFTW_ROOT"
-make
-make install
-
-export FFTW_ROOT=/home/user/lib/fftw-3.3.10
-export LD_LIBRARY_PATH=$FFTW_ROOT:$LD_LIBRARY_PATH
+# Load autocompletion for PIConGPU commands
+BASH_COMP_FILE=\$PICSRC/bin/picongpu-completion.bash
+if [ -f "\$BASH_COMP_FILE" ] ; then
+    source \$BASH_COMP_FILE
+else
+    echo "bash completion file '\$BASH_COMP_FILE' not found." >&2
+fi
+EOT
