@@ -29,7 +29,7 @@ source /etc/profile
 cd $PFX
 
 ## spack
-apt install build-essential ca-certificates coreutils curl environment-modules gfortran git gpg lsb-release python3 python3-distutils python3-venv unzip zip
+apt install -y build-essential ca-certificates coreutils curl environment-modules gfortran git gpg lsb-release python3 python3-distutils python3-venv unzip zip
 git clone --depth=100 --branch=releases/v0.21 https://github.com/spack/spack.git /opt/spack
 export SPACK_ROOT="/opt/spack"
 . /opt/spack/share/spack/setup-env.sh
