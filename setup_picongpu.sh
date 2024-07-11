@@ -9,13 +9,13 @@ fi
 module load nvhpc
 
 # cmake and other apt things
-apt install -y cmake file cmake-curses-gui git rsync libpng-dev libblosc-dev libjpeg-dev libjansson-dev paraview-dev
+apt install -y cmake file cmake-curses-gui git rsync libpng-dev libjpeg-dev libjansson-dev paraview-dev
 echo "cmake:"
-spack install --reuse cmake@3.26.6 %gcc@12.2.0
-spack load cmake@3.26.6 ^openssl certs=mozilla %gcc@12.2.0
+spack install --reuse cmake@3.26.6 %gcc@12.3.0
+spack load cmake@3.26.6 ^openssl certs=mozilla %gcc@12.3.0
 
 echo "openpmd-api:"
-spack install --reuse openpmd-api@0.15.2 +python %gcc@12.2.0 \
+spack install --reuse openpmd-api@0.15.2 +python %gcc@12.3.0 \
     ^adios2@2.9.2 ++blosc2 +cuda cuda_arch=70\
     ^cmake@3.26.6 \
     ^hdf5@1.14.3 \
@@ -29,13 +29,13 @@ spack install --reuse boost@1.83.0 \
     +atomic \
     ~python \
     cxxstd=17 \
-    %gcc@12.2.0
+    %gcc@12.3.0
 
 echo "pngwriter"
-spack install --reuse pngwriter@0.7.0 %gcc@12.2.0
+spack install --reuse pngwriter@0.7.0 %gcc@12.3.0
 
 echo "pip:"
-spack mark -e py-pip ^python@3.11.6 %gcc@12.2.0
+spack mark -e py-pip ^python@3.11.6 %gcc@12.3.0
 
 cat <<EOT > picongpu.profile
 # Name and Path of this Script ############################### (DO NOT change!)
@@ -59,28 +59,28 @@ spack unload
 # PIConGPU build dependencies #################################################
 #   need to load correct cmake and gcc to compile picongpu
 
-spack load gcc@12.2.0
-spack load cmake@3.26.6 ^openssl certs=mozilla %gcc@12.2.0
+spack load gcc@12.3.0
+spack load cmake@3.26.6 ^openssl certs=mozilla %gcc@12.3.0
 
 # General modules #############################################################
 #   correct dependencies are automatically loaded, if successfully installed using install.sh
 #   and no name confilcts in spack, see install.sh for more precise definition
 #   if name conflicts occur
 
-spack load openpmd-api@0.15.2 %gcc@12.2.0 \
+spack load openpmd-api@0.15.2 %gcc@12.3.0 \
     ^adios2@2.9.2 \
     ^hdf5@1.14.3 \
     ^openmpi@4.1.5 +atomics +cuda cuda_arch=70 \
     ^python@3.11.6 \
     ^py-numpy@1.26.2
-spack load boost@1.83.0 %gcc@12.2.0
+spack load boost@1.83.0 %gcc@12.3.0
 
 # PIConGPU output dependencies ################################################
 #
-spack load pngwriter@0.7.0 %gcc@12.2.0
+spack load pngwriter@0.7.0 %gcc@12.3.0
 
 # Python pip dependency #######################################################
-spack load py-pip ^python@3.11.6 %gcc@12.2.0
+spack load py-pip ^python@3.11.6 %gcc@12.3.0
 
 
 # Environment #################################################################

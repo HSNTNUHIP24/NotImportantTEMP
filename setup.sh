@@ -297,3 +297,5 @@ module unload nvhpc
 cd $PFX
 
 chmod -R 777 /opt
+
+echo "all done, inform everyone to log out"
