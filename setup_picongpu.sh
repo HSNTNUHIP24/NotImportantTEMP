@@ -23,7 +23,7 @@ spack install --reuse openpmd-api@0.15.2 +python %gcc \
     ^hdf5@1.14.3 \
     ^openmpi@4.1.5 +atomics +cuda cuda_arch=70\
     ^python@3.11.6 \
-    ^py-numpy@1.26.2
+    ^py-numpy@1.26.1
 
 echo "boost:"
 spack install --reuse boost@1.83.0 \
