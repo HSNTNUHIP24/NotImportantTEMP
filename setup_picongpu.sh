@@ -41,7 +41,7 @@ spack install --reuse pngwriter@0.7.0 %gcc
 echo "pip:"
 spack mark -e py-pip ^python@3.11.6 %gcc
 
-cat <<EOT > /home/user/picongpu.profile
+cat <<EOT > /workspace/picongpu.profile
 # Name and Path of this Script ############################### (DO NOT change!)
 export PIC_PROFILE=\$(cd \$(dirname \$BASH_SOURCE) && pwd)"/"\$(basename \$BASH_SOURCE)
 
@@ -88,7 +88,7 @@ spack load py-pip ^python@3.11.6 %gcc
 
 # Environment #################################################################
 #
-export PICSRC=\$HOME/src/picongpu
+export PICSRC=/workspace/src/picongpu
 export PIC_EXAMPLES=\$PICSRC/share/picongpu/examples
 export PIC_BACKEND="cuda:70"
 

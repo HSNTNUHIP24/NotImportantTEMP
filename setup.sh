@@ -6,20 +6,34 @@ else
     exit 1
 fi
 
+WORKER_IP="notset"
+if [ "$WORKER_IP" == "notset" ]; then
+    echo "WORKER_IP is not set yet"
+    exit 1
+fi
+
 sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
-useradd -m user
+mkdir /workspace
+chmod 777 /workspace
+adduser -u 1010 user --disabled-password --gecos ""
 echo 'user:user123' | chpasswd
-sudo addgroup -gid 1111 munge
-sudo addgroup -gid 1121 slurm
-sudo adduser -u 1111 munge --disabled-password --gecos "" -gid 1111
-sudo adduser -u 1121 slurm --disabled-password --gecos "" -gid 1121
+addgroup -gid 1111 munge
+addgroup -gid 1121 slurm
+adduser -u 1111 munge --disabled-password --gecos "" -gid 1111
+adduser -u 1121 slurm --disabled-password --gecos "" -gid 1121
 
 PFX=$(pwd)
 
 apt update
-apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git build-essential libmunge-dev libmunge2 munge 
 apt install -y linux-headers-`uname -r`
+apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git build-essential libmunge-dev libmunge2 munge nfs-kernel-server 
 
+## NFS
+echo "/opt    *(rwx,sync,no_root_squash)" >> /etc/exports
+echo "/home    *(rwx,sync,no_root_squash)" >> /etc/exports
+echo "/workspace    *(rwx,sync,no_root_squash)" >> /etc/exports
+systemctl start nfs-kernel-server.service
+# ufw allow from $WORKER_IP to any port nfs
 
 ## lmod and lua
 apt install -y liblua5.1-0 liblua5.1-0-dev lua5.1 tcl tcl8.6-dev libtcl8.6 lua-posix-dev

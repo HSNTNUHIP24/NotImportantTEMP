@@ -6,7 +6,7 @@ else
     echo "not running as root!"
     exit 1
 fi
-cd /opt
+cd /workspace
 git clone https://github.com/HSNTNUHIP24/nvidia-hpcg
 cd nvidia-hpcg
 sed -i "s/USE_GRACE=1/USE_GRACE=0/g" build_sample.sh
