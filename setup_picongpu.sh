@@ -9,6 +9,8 @@ fi
 module load nvhpc
 
 sed -i "s/cxx: null/cxx: g++/g" ~/.spack/linux/compilers.yaml
+sed -i "s/f77: null/f77: gfortran/g" ~/.spack/linux/compilers.yaml
+sed -i "s/fc: null/fc: gfortran/g" ~/.spack/linux/compilers.yaml
 
 # cmake and other apt things
 apt install -y cmake file cmake-curses-gui git rsync libpng-dev libjpeg-dev libjansson-dev paraview-dev
