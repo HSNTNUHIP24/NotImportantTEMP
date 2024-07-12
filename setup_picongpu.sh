@@ -41,7 +41,7 @@ spack install --reuse pngwriter@0.7.0 %gcc
 echo "pip:"
 spack mark -e py-pip ^python@3.11.6 %gcc
 
-cat <<EOT > picongpu.profile
+cat <<EOT > /home/user/picongpu.profile
 # Name and Path of this Script ############################### (DO NOT change!)
 export PIC_PROFILE=\$(cd \$(dirname \$BASH_SOURCE) && pwd)"/"\$(basename \$BASH_SOURCE)
 
