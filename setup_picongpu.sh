@@ -14,7 +14,7 @@ sed -i "s/cxx: null/cxx: g++/g" ~/.spack/linux/compilers.yaml
 apt install -y cmake file cmake-curses-gui git rsync libpng-dev libjpeg-dev libjansson-dev paraview-dev
 echo "cmake:"
 spack install --reuse cmake@3.26.6 %gcc@12.2.0
-spack load cmake@3.26.6 ^openssl certs=mozilla %gcc@12.2.0
+spack load cmake@3.26.6 ^openssl %gcc@12.2.0
 
 echo "openpmd-api:"
 spack install --reuse openpmd-api@0.15.2 +python %gcc@12.2.0 \
