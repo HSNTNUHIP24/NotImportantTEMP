@@ -9,11 +9,15 @@ fi
 sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
 useradd -m user
 echo 'user:user123' | chpasswd
+sudo addgroup -gid 1111 munge
+sudo addgroup -gid 1121 slurm
+sudo adduser -u 1111 munge --disabled-password --gecos "" -gid 1111
+sudo adduser -u 1121 slurm --disabled-password --gecos "" -gid 1121
 
 PFX=$(pwd)
 
 apt update
-apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git build-essential 
+apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git build-essential libmunge-dev libmunge2 munge 
 apt install -y linux-headers-`uname -r`
 
 
@@ -269,32 +273,32 @@ setenv("OPAL_PREFIX", pathJoin(nvcommdir, "mpi"))
 EOT
 cd $PFX
 
-## openmpi
-module load intel/latest
-module load nvhpc
-wget https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.3.tar.gz
-tar zxf openmpi-5.0.3.tar.gz
-cd openmpi-5.0.3
-./configure --prefix=/opt/openmpi CC=icx CXX=icpx FC=ifx
-make -j16
-make install
-mkdir -p /opt/apps/modulefiles/Linux/openmpi
-cat <<EOT > /opt/apps/modulefiles/Linux/openmpi/5.0.3.lua
-whatis([[Name : Intel Compiled OpenMPI]])
-whatis([[Version : 5.0.3]])
+# ## openmpi (not used)
+# module load intel/latest
+# module load nvhpc
+# wget https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.3.tar.gz
+# tar zxf openmpi-5.0.3.tar.gz
+# cd openmpi-5.0.3
+# ./configure --prefix=/opt/openmpi CC=icx CXX=icpx FC=ifx
+# make -j16
+# make install
+# mkdir -p /opt/apps/modulefiles/Linux/openmpi
+# cat <<EOT > /opt/apps/modulefiles/Linux/openmpi/5.0.3.lua
+# whatis([[Name : Intel Compiled OpenMPI]])
+# whatis([[Version : 5.0.3]])
 
 
-local root = "/opt/openmpi"
+# local root = "/opt/openmpi"
 
-prepend_path("PATH", pathJoin(root, "bin"))
-prepend_path("LD_LIBRARY_PATH", pathJoin(root, "lib"))
-prepend_path("CPATH", pathJoin(root, "include"))
+# prepend_path("PATH", pathJoin(root, "bin"))
+# prepend_path("LD_LIBRARY_PATH", pathJoin(root, "lib"))
+# prepend_path("CPATH", pathJoin(root, "include"))
 
-prepend_path("LIBRARY_PATH", pathJoin(root, "lib"))
-EOT
-module unload intel/latest
-module unload nvhpc
-cd $PFX
+# prepend_path("LIBRARY_PATH", pathJoin(root, "lib"))
+# EOT
+# module unload intel/latest
+# module unload nvhpc
+# cd $PFX
 
 chmod -R 777 /opt
 
