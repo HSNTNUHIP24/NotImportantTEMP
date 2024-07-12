@@ -9,23 +9,23 @@ fi
 module load nvhpc
 
 sed -i "s/cxx: null/cxx: g++/g" ~/.spack/linux/compilers.yaml
-sed -i "s/f77: null/f77: gfortran/g" ~/.spack/linux/compilers.yaml
-sed -i "s/fc: null/fc: gfortran/g" ~/.spack/linux/compilers.yaml
+sed -i "s/f77: null/f77: gfortran-12/g" ~/.spack/linux/compilers.yaml
+sed -i "s/fc: null/fc: gfortran-12/g" ~/.spack/linux/compilers.yaml
 
 # cmake and other apt things
-apt install -y cmake file cmake-curses-gui git rsync libpng-dev libjpeg-dev libjansson-dev paraview-dev
+apt install -y cmake file cmake-curses-gui git rsync libpng-dev libjpeg-dev libjansson-dev paraview-dev gfortran-12
 echo "cmake:"
 spack install --reuse cmake@3.26.5 %gcc
 spack load cmake@3.26.5 ^openssl %gcc
 
 echo "openpmd-api:"
-spack install --reuse openpmd-api@0.15.2 +python %gcc \
+spack install --reuse --no-checksum openpmd-api@0.15.2 +python %gcc \
     ^adios2@2.9.2 ++blosc2 +cuda cuda_arch=70\
     ^cmake@3.26.5 \
     ^hdf5@1.14.3 \
     ^openmpi@4.1.5 +atomics +cuda cuda_arch=70\
     ^python@3.11.6 \
-    ^py-numpy@1.26.1
+    ^py-numpy@1.23.5
 
 echo "boost:"
 spack install --reuse boost@1.83.0 \
@@ -63,8 +63,7 @@ spack unload
 # PIConGPU build dependencies #################################################
 #   need to load correct cmake and gcc to compile picongpu
 
-spack load gcc
-spack load cmake@3.26.5 ^openssl certs=mozilla %gcc
+spack load cmake@3.26.5 ^openssl %gcc
 
 # General modules #############################################################
 #   correct dependencies are automatically loaded, if successfully installed using install.sh
@@ -76,7 +75,7 @@ spack load openpmd-api@0.15.2 %gcc \
     ^hdf5@1.14.3 \
     ^openmpi@4.1.5 +atomics +cuda cuda_arch=70 \
     ^python@3.11.6 \
-    ^py-numpy@1.26.1
+    ^py-numpy@1.23.5
 spack load boost@1.83.0 %gcc
 
 # PIConGPU output dependencies ################################################
