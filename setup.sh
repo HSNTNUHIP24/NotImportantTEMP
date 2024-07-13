@@ -6,11 +6,11 @@ else
     exit 1
 fi
 
-WORKER_IP="notset"
-if [ "$WORKER_IP" == "notset" ]; then
-    echo "WORKER_IP is not set yet"
-    exit 1
-fi
+# WORKER_IP="notset"
+# if [ "$WORKER_IP" == "notset" ]; then
+#     echo "WORKER_IP is not set yet"
+#     exit 1
+# fi
 
 sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
 mkdir /workspace
