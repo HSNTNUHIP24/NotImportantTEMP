@@ -26,12 +26,12 @@ PFX=$(pwd)
 
 apt update
 apt install -y linux-headers-`uname -r`
-apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git build-essential libmunge-dev libmunge2 munge nfs-kernel-server 
+apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git build-essential libmunge-dev libmunge2 munge systemd nfs-kernel-server 
 
 ## NFS
-echo "/opt    *(rwx,sync,no_root_squash)" >> /etc/exports
-echo "/home    *(rwx,sync,no_root_squash)" >> /etc/exports
-echo "/workspace    *(rwx,sync,no_root_squash)" >> /etc/exports
+echo "/opt    *(rw,sync,no_root_squash)" >> /etc/exports
+echo "/home    *(rw,sync,no_root_squash)" >> /etc/exports
+echo "/workspace    *(rw,sync,no_root_squash)" >> /etc/exports
 systemctl start nfs-kernel-server.service
 # ufw allow from $WORKER_IP to any port nfs
 

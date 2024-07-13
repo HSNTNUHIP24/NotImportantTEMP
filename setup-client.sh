@@ -16,7 +16,7 @@ adduser -u 1121 slurm --disabled-password --gecos "" -gid 1121
 
 apt update
 apt install -y linux-headers-`uname -r`
-apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git build-essential libmunge-dev libmunge2 munge nfs-common 
+apt install -y vim nano wget curl gnupg2 gpg-agent bc python3 libc-dev libc6-dev gcc g++ unzip git build-essential libmunge-dev libmunge2 munge systemd nfs-common 
 
 sudo mkdir /workspace
 chmod 777 /workspace
