@@ -6,11 +6,16 @@ else
     exit 1
 fi
 
-# WORKER_IP="notset"
-# if [ "$WORKER_IP" == "notset" ]; then
-#     echo "WORKER_IP is not set yet"
-#     exit 1
-# fi
+if dpkg -l | grep -q ufw; then
+    ufw disable
+    apt remove --purge ufw -y
+fi
+if dpkg -l | grep -q iptables; then
+    iptables -F
+    iptables -P INPUT ACCEPT
+    iptables -P FORWARD ACCEPT
+    iptables -P OUTPUT ACCEPT
+fi
 
 sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
 mkdir /workspace
