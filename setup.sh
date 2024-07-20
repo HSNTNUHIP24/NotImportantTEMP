@@ -233,7 +233,6 @@ cmd = "logger -t lmod_tracking nvhpc" .. version .. output_tracking
 execute{cmd = cmd, modeA = {"load"}}
 end
 
-
 local nvcudadir = pathJoin(nvhome, target, version, "cuda")
 local nvcompdir = pathJoin(nvhome, target, version, "compilers")
 local nvmathdir = pathJoin(nvhome, target, version, "math_libs")
@@ -267,7 +266,7 @@ prepend_path("LIBRARY_PATH", pathJoin(nvcommdir, "nccl", "lib"))
 prepend_path("LIBRARY_PATH", pathJoin(nvcommdir, "nvshmem", "lib"))
 prepend_path("LIBRARY_PATH", pathJoin(nvcompdir, "extras", "qd", "lib"))
 -- add cuda compat
-prepend_path("LIBRARY_PATH", pathJoin(nvcudadir, "lib64", "compat"))
+prepend_path("LIBRARY_PATH", pathJoin(nvcudadir, "12.4", "compat"))
 
 prepend_path("LD_LIBRARY_PATH", pathJoin(nvcudadir, "lib64"))
 prepend_path("LD_LIBRARY_PATH", pathJoin(nvcudadir, "extras", "CUPTI", "lib64"))
@@ -278,7 +277,7 @@ prepend_path("LD_LIBRARY_PATH", pathJoin(nvcommdir, "nccl", "lib"))
 prepend_path("LD_LIBRARY_PATH", pathJoin(nvcommdir, "nvshmem", "lib"))
 prepend_path("LD_LIBRARY_PATH", pathJoin(nvcompdir, "extras", "qd", "lib"))
 -- add cuda compat
-prepend_path("LD_LIBRARY_PATH", pathJoin(nvcudadir, "lib64", "compat"))
+prepend_path("LD_LIBRARY_PATH", pathJoin(nvcudadir, "12.4", "compat"))
 
 prepend_path("CPATH", pathJoin(nvmathdir, "include"))
 prepend_path("CPATH", pathJoin(nvcommdir, "mpi", "include"))
